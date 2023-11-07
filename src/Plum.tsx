@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 type Point = { x: number, y: number };
 type Branch = { start: Point, length: number, theta: number };
 
-function Plum() {
+export default function Plum() {
   const WIDTH = 600;
   const HEIGHT = 600;
   const CHANCE = 0.4;
@@ -24,13 +24,10 @@ function Plum() {
       ctx.stroke();
     }
 
-    const getEndPoint = (b: Branch): Point => {
-      const { start: { x, y }, length, theta } = b;
-      return {
-        x: x + length * Math.cos(theta),
-        y: y + length * Math.sin(theta),
-      }
-    }
+    const getEndPoint = ({ start: { x, y }, length, theta }: Branch): Point => ({
+      x: x + length * Math.cos(theta),
+      y: y + length * Math.sin(theta),
+    })
 
     const drawBranch = (b: Branch): void => {
       lineTo(b.start, getEndPoint(b));
@@ -58,15 +55,14 @@ function Plum() {
     }
 
     const frame = () => {
-      const tasks = [...pendingTasks];
+      const tasks = pendingTasks.slice();
       pendingTasks.length = 0;
       tasks.forEach(fn => fn());
     }
 
     const startFrame = (count = 0) => {
       requestAnimationFrame(() => {
-        if (count % 5 === 0)
-          frame();
+        if (count % 5 === 0) frame();
         startFrame(count + 1);
       });
     }
@@ -87,9 +83,7 @@ function Plum() {
 
   return (
     <>
-      <canvas ref={canvasRef} width={WIDTH} height={HEIGHT}/>
+      <canvas ref={canvasRef} width={WIDTH} height={HEIGHT} />
     </>
   )
 }
-
-export default Plum;
